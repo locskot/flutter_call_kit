@@ -35,8 +35,8 @@ typedef Future<dynamic> OnDeactivateAudioSession();
 ///
 /// you might want to do following things when receiving this event:
 /// Start playing ringback if it is an outgoing call
-typedef Future<dynamic> OnIncomingCall(String? error, String? uuid, String? handle,
-    String? localizedCallerName, bool? fromPushKit);
+typedef Future<dynamic> OnIncomingCall(
+    String? error, String? uuid, String? handle, String? localizedCallerName, bool? fromPushKit);
 
 /// A call was muted by the system or the user:
 ///
@@ -96,21 +96,15 @@ class IOSOptions {
     this.maximumCallsPerCallGroup = 1,
     this.supportsVideo = true,
     this.includesCallsInRecents = true,
-  })  : assert(appName != null),
-        assert(imageName != null),
-        assert(ringtoneSound != null),
-        assert(maximumCallGroups != null),
-        assert(maximumCallsPerCallGroup != null),
-        assert(supportsVideo != null),
-        assert(includesCallsInRecents != null);
+  });
 
   Map<String, dynamic> toMap() {
     return {
       "appName": appName,
       "imageName": imageName,
       "ringtoneSound": ringtoneSound,
-      "maximumCallGroups": maximumCallGroups?.toString(),
-      "maximumCallsPerCallGroup": maximumCallsPerCallGroup?.toString(),
+      "maximumCallGroups": maximumCallGroups.toString(),
+      "maximumCallsPerCallGroup": maximumCallsPerCallGroup.toString(),
       "supportsVideo": supportsVideo,
       "includesCallsInRecents": includesCallsInRecents,
     };
@@ -123,8 +117,8 @@ class FlutterCallKit {
   @visibleForTesting
   FlutterCallKit.private(MethodChannel channel) : _channel = channel;
 
-  static final FlutterCallKit _instance = FlutterCallKit.private(
-      const MethodChannel('com.peerwaya/flutter_callkit_plugin'));
+  static final FlutterCallKit _instance =
+      FlutterCallKit.private(const MethodChannel('com.peerwaya/flutter_callkit_plugin'));
 
   final MethodChannel _channel;
 
@@ -200,14 +194,12 @@ class FlutterCallKit {
         if (_performAnswerCallAction == null) {
           return null;
         }
-        return _performAnswerCallAction!(
-            call.arguments.cast<String, dynamic>()["callUUID"]);
+        return _performAnswerCallAction!(call.arguments.cast<String, dynamic>()["callUUID"]);
       case "performEndCallAction":
         if (_performEndCallAction == null) {
           return null;
         }
-        return _performEndCallAction!(
-            call.arguments.cast<String, dynamic>()["callUUID"]);
+        return _performEndCallAction!(call.arguments.cast<String, dynamic>()["callUUID"]);
       case "didActivateAudioSession":
         if (_didActivateAudioSession == null) {
           return null;
@@ -224,8 +216,8 @@ class FlutterCallKit {
           return null;
         }
         Map map = call.arguments.cast<String, dynamic>();
-        return _didDisplayIncomingCall!(map["error"], map["callUUID"],
-            map["handle"], map["localizedCallerName"], map["fromPushKit"]);
+        return _didDisplayIncomingCall!(
+            map["error"], map["callUUID"], map["handle"], map["localizedCallerName"], map["fromPushKit"]);
       case "didPerformSetMutedCallAction":
         if (_didPerformSetMutedCallAction == null) {
           return null;
@@ -261,10 +253,8 @@ class FlutterCallKit {
   /// A [handle] e.g Phone number of the caller
   /// A [handleType] which describes this [handle] see [HandleType]
   /// tell the system whether this is a [video] call
-  Future<void> displayIncomingCall(
-      String uuid, String handle, String localizedCallerName,
-      {HandleType handleType = HandleType.phoneNumber,
-      bool video = false}) async {
+  Future<void> displayIncomingCall(String uuid, String handle, String localizedCallerName,
+      {HandleType handleType = HandleType.phoneNumber, bool video = false}) async {
     if (!Platform.isIOS) {
       return;
     }
@@ -286,8 +276,7 @@ class FlutterCallKit {
   /// tell the system whether this is a [video] call
   ///
   Future<void> startCall(String uuid, String handle, String contactIdentifier,
-      {HandleType handleType = HandleType.phoneNumber,
-      bool video = false}) async {
+      {HandleType handleType = HandleType.phoneNumber, bool video = false}) async {
     if (!Platform.isIOS) {
       return;
     }
@@ -304,16 +293,14 @@ class FlutterCallKit {
     if (!Platform.isIOS) {
       return;
     }
-    await _channel.invokeMethod<void>(
-        'reportConnectingOutgoingCallWithUUID', uuid);
+    await _channel.invokeMethod<void>('reportConnectingOutgoingCallWithUUID', uuid);
   }
 
   Future<void> reportConnectedOutgoingCallWithUUID(String uuid) async {
     if (!Platform.isIOS) {
       return;
     }
-    await _channel.invokeMethod<void>(
-        'reportConnectedOutgoingCallWithUUID', uuid);
+    await _channel.invokeMethod<void>('reportConnectedOutgoingCallWithUUID', uuid);
   }
 
   /// Report that the call ended without the user initiating
